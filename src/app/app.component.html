@@ -1,6 +1,10 @@
-<form (ngSubmit)="onSubmit()">
-  <button type="submit" class="btn btn-success">Submit</button>
-</form>
-
-<p id='result'> {{ result | async }}</p>
+<mat-card>
+  <mat-card-title>Tryout</mat-card-title>
+  <mat-card-content>
+    <p>{{ result | async }}</p>
+    <form (ngSubmit)="onSubmit()">
+      <button mat-raised-button type="submit" class="btn btn-success">Submit</button>
+    </form>
+  </mat-card-content>
+</mat-card>
 <router-outlet></router-outlet>
