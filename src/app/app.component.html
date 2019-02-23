@@ -4,20 +4,21 @@
     <form (ngSubmit)="onSubmit()">
       <mat-form-field>
         <mat-label>Request</mat-label>
-        <input matInput type="text" placeholder="Type any text" name="request" #request="ngModel" [(ngModel)]="currentQuery" required>
+        <input matInput type="text" placeholder="Type any text" name="request" #request="ngModel"
+          [(ngModel)]="currentQuery" required>
       </mat-form-field>
       <button mat-button type="submit" [disabled]="request.invalid" class="btn btn-success">Submit</button>
     </form>
   </mat-card-content>
 </mat-card>
 <div fxLayout="row wrap" fxLayoutAlign="start center">
-  <div @scrollOut fxFlex="20%" *ngFor="let request of requests">
+  <div @scrollOut fxFlex="25%" fxFlex.sm="50%" fxFlex.xs="100%" *ngFor="let request of requests">
     <mat-card>
       <mat-card-title>{{ request.query }}</mat-card-title>
-      <mat-progress-bar #progressBar mode="buffer" [value]="request.progress.value"
-        [bufferValue]="request.progress.bufferValue">
+      <mat-progress-bar #progressBar mode="buffer" [value]="request.progress | async"
+        [bufferValue]="request.progress | async">
       </mat-progress-bar>
-      <p>{{ request.result }}</p>
+      <p>Querying {{ request.result | async }}</p>
     </mat-card>
   </div>
 </div>

@@ -1,8 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { SlowService } from './slow.service';
+import { ReplaySubject } from 'rxjs';
+import { AppRequest, SlowService } from './slow.service';
 
 @Component({
   selector: 'app-root',
@@ -20,22 +19,22 @@ import { SlowService } from './slow.service';
     ])]
 })
 export class AppComponent {
-  requests = [];
+  requests: AppRequest[] = [];
   limit = 10;
   currentQuery: string;
 
   constructor(private slow: SlowService) { }
 
   onSubmit() {
+    const request = {
+      query: this.currentQuery,
+      progress: new ReplaySubject<number>(1),
+      result: new ReplaySubject<string>(1)
+    }
+    this.requests.unshift(request);
     if (this.requests.length >= this.limit) {
       this.requests.pop();
     }
-    of({progress: { value: 0, bufferValue: 0}, query: this.currentQuery, result: 'Fetching...' }).pipe(
-      tap((request) => this.requests.unshift(request)),
-      switchMap((request) => this.slow.get(request))
-    ).subscribe((request) => {
-      request.progress.bufferValue = 100;
-      request.progress.value = 100;
-    });
+    this.slow.get(request).subscribe();
   }
 }
