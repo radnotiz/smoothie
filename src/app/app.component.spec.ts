@@ -1,7 +1,9 @@
-import { TestBed, async, ComponentFixture } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule, MatCardModule, MatDividerModule, MatGridListModule, MatInputModule, MatListModule, MatProgressBarModule } from '@angular/material';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { MatCardModule, MatButtonModule, MatProgressBarModule, MatDividerModule, MatListModule } from '@angular/material';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -15,6 +17,10 @@ describe('AppComponent', () => {
         MatProgressBarModule,
         MatDividerModule,
         MatListModule,
+        MatInputModule,
+        MatGridListModule,
+        FormsModule,
+        NoopAnimationsModule,
       ],
       declarations: [
         AppComponent

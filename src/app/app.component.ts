@@ -20,22 +20,22 @@ import { SlowService } from './slow.service';
     ])]
 })
 export class AppComponent {
-  progressBars = [];
-  limit = 5;
+  requests = [];
+  limit = 10;
+  currentQuery: string;
 
   constructor(private slow: SlowService) { }
 
   onSubmit() {
-    if (this.progressBars.length >= this.limit) {
-      this.progressBars.pop();
+    if (this.requests.length >= this.limit) {
+      this.requests.pop();
     }
-    const progressBar = { value: 0, bufferValue: 0 };
-    of('').pipe(
-      tap(() => this.progressBars.unshift(progressBar)),
-      switchMap(() => this.slow.get())
-    ).subscribe((result) => {
-      progressBar.bufferValue = 100;
-      progressBar.value = 100;
+    of({progress: { value: 0, bufferValue: 0}, query: this.currentQuery, result: 'Fetching...' }).pipe(
+      tap((request) => this.requests.unshift(request)),
+      switchMap((request) => this.slow.get(request))
+    ).subscribe((request) => {
+      request.progress.bufferValue = 100;
+      request.progress.value = 100;
     });
   }
 }

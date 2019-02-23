@@ -2,13 +2,23 @@
   <mat-card-title>Tryout</mat-card-title>
   <mat-card-content>
     <form (ngSubmit)="onSubmit()">
-      <button mat-raised-button type="submit" class="btn btn-success">Submit</button>
+      <mat-form-field>
+        <mat-label>Request</mat-label>
+        <input matInput type="text" placeholder="Type any text" name="request" #request="ngModel" [(ngModel)]="currentQuery" required>
+      </mat-form-field>
+      <button mat-button type="submit" [disabled]="request.invalid" class="btn btn-success">Submit</button>
     </form>
-    <mat-list>
-      <mat-list-item @scrollOut *ngFor="let bar of progressBars">
-        <mat-progress-bar #progressBar mode="buffer" [value]="bar.value" [bufferValue]="bar.bufferValue"></mat-progress-bar>
-      </mat-list-item>
-    </mat-list>
   </mat-card-content>
 </mat-card>
+<div fxLayout="row wrap" fxLayoutAlign="start center">
+  <div @scrollOut fxFlex="20%" *ngFor="let request of requests">
+    <mat-card>
+      <mat-card-title>{{ request.query }}</mat-card-title>
+      <mat-progress-bar #progressBar mode="buffer" [value]="request.progress.value"
+        [bufferValue]="request.progress.bufferValue">
+      </mat-progress-bar>
+      <p>{{ request.result }}</p>
+    </mat-card>
+  </div>
+</div>
 <router-outlet></router-outlet>
