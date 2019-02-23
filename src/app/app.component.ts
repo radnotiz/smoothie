@@ -1,26 +1,41 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { SlowService } from './slow.service';
-import { Subject, BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
+import { SlowService } from './slow.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.styl'],
+  animations: [
+    trigger('scrollOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('0.5s', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        animate('0.5s', style({ opacity: 0 }))
+      ])
+    ])]
 })
 export class AppComponent {
-  result: Subject<string> = new BehaviorSubject('Click on Submit.');
+  progressBars = [];
+  limit = 5;
 
   constructor(private slow: SlowService) { }
 
   onSubmit() {
-    of('Please wait...').pipe(
-      tap((initial) => {
-        this.result.next(initial);
-      }),
+    if (this.progressBars.length >= this.limit) {
+      this.progressBars.pop();
+    }
+    const progressBar = { value: 0, bufferValue: 0 };
+    of('').pipe(
+      tap(() => this.progressBars.unshift(progressBar)),
       switchMap(() => this.slow.get())
     ).subscribe((result) => {
-      this.result.next(result);
+      progressBar.bufferValue = 100;
+      progressBar.value = 100;
     });
   }
 }

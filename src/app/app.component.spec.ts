@@ -1,7 +1,7 @@
 import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { MatCardModule, MatButtonModule } from '@angular/material';
+import { MatCardModule, MatButtonModule, MatProgressBarModule, MatDividerModule, MatListModule } from '@angular/material';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -12,6 +12,9 @@ describe('AppComponent', () => {
         RouterTestingModule,
         MatCardModule,
         MatButtonModule,
+        MatProgressBarModule,
+        MatDividerModule,
+        MatListModule,
       ],
       declarations: [
         AppComponent

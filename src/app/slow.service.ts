@@ -11,7 +11,7 @@ export class SlowService {
 
   get(): Observable<string> {
     return of('Done.').pipe(
-      delay(5000)
+      delay(3000)
     )
   }
 }
