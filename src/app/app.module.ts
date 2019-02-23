@@ -7,7 +7,9 @@ import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatButtonModule, MatCardModule, MatProgressBarModule, MatDividerModule, MatListModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatProgressBarModule, MatDividerModule, MatListModule, MatInputModule, MatGridListModule } from '@angular/material';
+
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -23,6 +25,9 @@ import { MatButtonModule, MatCardModule, MatProgressBarModule, MatDividerModule,
     MatProgressBarModule,
     MatDividerModule,
     MatListModule,
+    MatInputModule,
+    MatGridListModule,
+    FlexLayoutModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
