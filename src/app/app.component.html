@@ -1,10 +1,14 @@
 <mat-card>
   <mat-card-title>Tryout</mat-card-title>
   <mat-card-content>
-    <p>{{ result | async }}</p>
     <form (ngSubmit)="onSubmit()">
       <button mat-raised-button type="submit" class="btn btn-success">Submit</button>
     </form>
+    <mat-list>
+      <mat-list-item @scrollOut *ngFor="let bar of progressBars">
+        <mat-progress-bar #progressBar mode="buffer" [value]="bar.value" [bufferValue]="bar.bufferValue"></mat-progress-bar>
+      </mat-list-item>
+    </mat-list>
   </mat-card-content>
 </mat-card>
 <router-outlet></router-outlet>
