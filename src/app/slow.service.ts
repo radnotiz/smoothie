@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
-import { delay, map, tap } from 'rxjs/operators';
-
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { delay, map, shareReplay, tap } from 'rxjs/operators';
+import { CacheService } from './cache.service';
 
 export interface AppRequest {
   query: string,
-  progress: Subject<number>,
-  result: Subject<string>,
+  progress: Observable<number>,
+  result: Observable<string>,
 }
 
 @Injectable({
@@ -14,42 +14,32 @@ export interface AppRequest {
 })
 export class SlowService {
 
-  cache: Map<string, AppRequest> = new Map<string, AppRequest>();
-  cacheSizeLimit = 3;
+  constructor(private cache: CacheService<string, AppRequest>) { }
 
-  constructor() { }
-
-  get(request: AppRequest): Subject<AppRequest> {
-    const withKey = request.query;
-    return this.cache.has(withKey) ? this.getCache(request, withKey) : this.setCache(request, withKey);
+  get(request: AppRequest): Observable<string> {
+    const key = request.query;
+    return this.cache.has(key) ? this.getCache(key, request) : this.setCache(key, request);
   }
 
-  setCache(request: AppRequest, withKey: string) {
-    request.result = this.getBackend(request);
-    if (this.cache.size >= this.cacheSizeLimit) {
-      this.cache.delete(this.cache.keys().next().value);
-    }
-    this.cache.set(withKey, request);
-
-    return new BehaviorSubject(request);
+  setCache(key: string, request: AppRequest): Observable<string> {
+    this.cache.set(key, request);
+    request.progress = new BehaviorSubject<number>(0);;
+    return this.getBackend(request.query)
+      .pipe(
+        shareReplay(1),
+        tap(() => (request.progress as Subject<number>).next(100)));
   }
 
-  getCache(request: AppRequest, withKey: string): Subject<AppRequest> {
-    const cached = this.cache.get(withKey)
-    cached.progress.subscribe(progress => request.progress.next(progress));
-    cached.result.subscribe(result => request.result.next(result));
-
-    return new BehaviorSubject(request);
+  getCache(key: string, request: AppRequest): Observable<string> {
+    const cached = this.cache.get(key)
+    request.progress = cached.progress;
+    return cached.result;
   }
 
-  getBackend(request: AppRequest): Subject<string> {
-    const result = new ReplaySubject<string>(1);
-    of(request).pipe(
-      tap(() => request.progress.next(0)),
+  getBackend(query: string): Observable<string> {
+    return of(query).pipe(
       delay(3000),
-      tap(() => request.progress.next(100)),
-      map(() => 'OK'),
-    ).subscribe(result);
-    return result;
+      map(() => `${new Date()} OK`),
+    )
   }
 }

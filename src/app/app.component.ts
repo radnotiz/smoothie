@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AppRequest, SlowService } from './slow.service';
 
 @Component({
@@ -20,7 +20,7 @@ import { AppRequest, SlowService } from './slow.service';
 })
 export class AppComponent {
   requests: AppRequest[] = [];
-  limit = 10;
+  limit = 12;
   currentQuery: string;
 
   constructor(private slow: SlowService) { }
@@ -28,13 +28,13 @@ export class AppComponent {
   onSubmit() {
     const request = {
       query: this.currentQuery,
-      progress: new ReplaySubject<number>(1),
-      result: new ReplaySubject<string>(1)
+      progress: new Observable<number>(),
+      result: new Observable<string>(),
     }
     this.requests.unshift(request);
     if (this.requests.length >= this.limit) {
       this.requests.pop();
     }
-    this.slow.get(request).subscribe();
+    request.result = this.slow.get(request);
   }
 }
