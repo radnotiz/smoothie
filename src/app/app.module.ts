@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule, MatCardModule, MatProgressBarModule, MatDividerModule, MatListModule, MatInputModule, MatGridListModule } from '@angular/material';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { CACHE_SIZE_LIMIT } from './cache.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatGridListModule,
     FlexLayoutModule,
   ],
-  providers: [],
+  providers: [
+    { provide: CACHE_SIZE_LIMIT, useValue: 3 }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -18,7 +18,7 @@
       <mat-progress-bar #progressBar mode="buffer" [value]="request.progress | async"
         [bufferValue]="request.progress | async">
       </mat-progress-bar>
-      <p>Querying {{ request.result | async }}</p>
+      <p>{{ request.result | async }}</p>
     </mat-card>
   </div>
 </div>

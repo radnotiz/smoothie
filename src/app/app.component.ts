@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject, BehaviorSubject } from 'rxjs';
 import { AppRequest, SlowService } from './slow.service';
 
 @Component({
@@ -20,7 +20,7 @@ import { AppRequest, SlowService } from './slow.service';
 })
 export class AppComponent {
   requests: AppRequest[] = [];
-  limit = 10;
+  limit = 12;
   currentQuery: string;
 
   constructor(private slow: SlowService) { }
@@ -29,7 +29,7 @@ export class AppComponent {
     const request = {
       query: this.currentQuery,
       progress: new ReplaySubject<number>(1),
-      result: new ReplaySubject<string>(1)
+      result: new ReplaySubject<string>(1),
     }
     this.requests.unshift(request);
     if (this.requests.length >= this.limit) {

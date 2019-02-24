@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SlowService } from './slow.service';
-import { CACHE_SIZE_LIMIT } from './cache.service';
+import { CacheService, CACHE_SIZE_LIMIT } from './cache.service';
 
-describe('SlowService', () => {
+describe('CacheService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     providers: [
       { provide: CACHE_SIZE_LIMIT, useValue: 3 }
@@ -11,7 +10,7 @@ describe('SlowService', () => {
   }));
 
   it('should be created', () => {
-    const service: SlowService = TestBed.get(SlowService);
+    const service: CacheService<number, number> = TestBed.get(CacheService);
     expect(service).toBeTruthy();
   });
 });

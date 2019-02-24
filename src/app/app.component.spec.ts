@@ -4,6 +4,7 @@ import { MatButtonModule, MatCardModule, MatDividerModule, MatGridListModule, Ma
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { CACHE_SIZE_LIMIT } from './cache.service';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -25,6 +26,9 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        { provide: CACHE_SIZE_LIMIT, useValue: 3 }
+      ]
     }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
   }));

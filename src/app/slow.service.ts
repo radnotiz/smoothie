@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
-import { delay, map, tap } from 'rxjs/operators';
-
+import { Observable, of, Subject } from 'rxjs';
+import { delay, map, tap, shareReplay } from 'rxjs/operators';
+import { CacheService } from './cache.service';
 
 export interface AppRequest {
   query: string,
@@ -14,42 +14,36 @@ export interface AppRequest {
 })
 export class SlowService {
 
-  cache: Map<string, AppRequest> = new Map<string, AppRequest>();
-  cacheSizeLimit = 3;
+  constructor(private cache: CacheService<string, AppRequest>) { }
 
-  constructor() { }
-
-  get(request: AppRequest): Subject<AppRequest> {
-    const withKey = request.query;
-    return this.cache.has(withKey) ? this.getCache(request, withKey) : this.setCache(request, withKey);
+  get(request: AppRequest): Observable<string> {
+    const key = request.query;
+    return this.cache.has(key) ? this.getCache(key, request) : this.setCache(key, request);
   }
 
-  setCache(request: AppRequest, withKey: string) {
-    request.result = this.getBackend(request);
-    if (this.cache.size >= this.cacheSizeLimit) {
-      this.cache.delete(this.cache.keys().next().value);
-    }
-    this.cache.set(withKey, request);
-
-    return new BehaviorSubject(request);
+  setCache(key: string, request: AppRequest) {
+    this.getBackend(request).pipe(
+      shareReplay(1)
+    ).subscribe(request.result);
+    this.cache.set(key, request);
+    return request.result;
   }
 
-  getCache(request: AppRequest, withKey: string): Subject<AppRequest> {
-    const cached = this.cache.get(withKey)
-    cached.progress.subscribe(progress => request.progress.next(progress));
-    cached.result.subscribe(result => request.result.next(result));
-
-    return new BehaviorSubject(request);
+  getCache(key: string, request: AppRequest): Observable<string> {
+    const cached = this.cache.get(key)
+    cached.progress.subscribe(request.progress);
+    cached.result.subscribe(request.result);
+    return request.result;
   }
 
-  getBackend(request: AppRequest): Subject<string> {
-    const result = new ReplaySubject<string>(1);
-    of(request).pipe(
-      tap(() => request.progress.next(0)),
+  getBackend(request: AppRequest): Observable<string> {
+    return of(request).pipe(
+      tap(() => {
+        request.progress.next(0);
+      }),
       delay(3000),
       tap(() => request.progress.next(100)),
-      map(() => 'OK'),
-    ).subscribe(result);
-    return result;
+      map(() => `${new Date()} OK`),
+    )
   }
 }
