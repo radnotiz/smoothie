@@ -5,6 +5,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { CACHE_SIZE_LIMIT } from './cache.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing'
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -22,6 +23,7 @@ describe('AppComponent', () => {
         MatGridListModule,
         FormsModule,
         NoopAnimationsModule,
+        HttpClientTestingModule,
       ],
       declarations: [
         AppComponent
