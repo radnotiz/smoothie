@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of, Subject, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { delay, map, tap, shareReplay } from 'rxjs/operators';
 import { CacheService } from './cache.service';
 
 export interface AppRequest {
   query: string,
-  progress: Subject<number>,
-  result: Subject<string>,
+  progress: Observable<number>,
+  result: Observable<string>,
 }
 
 @Injectable({
@@ -21,28 +21,24 @@ export class SlowService {
     return this.cache.has(key) ? this.getCache(key, request) : this.setCache(key, request);
   }
 
-  setCache(key: string, request: AppRequest) {
-    this.getBackend(request).pipe(
-      shareReplay(1)
-    ).subscribe(request.result);
+  setCache(key: string, request: AppRequest): Observable<string> {
     this.cache.set(key, request);
-    return request.result;
+    request.progress = new BehaviorSubject<number>(0);;
+    return this.getBackend(request.query)
+      .pipe(
+        shareReplay(1),
+        tap(() => (request.progress as Subject<number>).next(100)));
   }
 
   getCache(key: string, request: AppRequest): Observable<string> {
     const cached = this.cache.get(key)
-    cached.progress.subscribe(request.progress);
-    cached.result.subscribe(request.result);
-    return request.result;
+    request.progress = cached.progress;
+    return cached.result;
   }
 
-  getBackend(request: AppRequest): Observable<string> {
-    return of(request).pipe(
-      tap(() => {
-        request.progress.next(0);
-      }),
+  getBackend(query: string): Observable<string> {
+    return of(query).pipe(
       delay(3000),
-      tap(() => request.progress.next(100)),
       map(() => `${new Date()} OK`),
     )
   }

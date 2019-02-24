@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { ReplaySubject, BehaviorSubject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { AppRequest, SlowService } from './slow.service';
 
 @Component({
@@ -28,13 +28,13 @@ export class AppComponent {
   onSubmit() {
     const request = {
       query: this.currentQuery,
-      progress: new ReplaySubject<number>(1),
-      result: new ReplaySubject<string>(1),
+      progress: new Observable<number>(),
+      result: new Observable<string>(),
     }
     this.requests.unshift(request);
     if (this.requests.length >= this.limit) {
       this.requests.pop();
     }
-    this.slow.get(request).subscribe();
+    request.result = this.slow.get(request);
   }
 }
