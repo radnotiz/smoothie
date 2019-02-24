@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-
 import { SlowService } from './slow.service';
-import { CACHE_SIZE_LIMIT } from './cache.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+
 
 describe('SlowService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    providers: [
-      { provide: CACHE_SIZE_LIMIT, useValue: 3 }
+    imports: [
+      HttpClientTestingModule
     ]
   }));
 

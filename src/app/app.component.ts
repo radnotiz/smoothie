@@ -1,7 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AppRequest, SlowService } from './slow.service';
+import { SlowService } from './slow.service';
 
 @Component({
   selector: 'app-root',
@@ -19,22 +18,32 @@ import { AppRequest, SlowService } from './slow.service';
     ])]
 })
 export class AppComponent {
-  requests: AppRequest[] = [];
+  requests = [];
   limit = 12;
-  currentQuery: string;
+  queryText: string;
 
   constructor(private slow: SlowService) { }
 
   onSubmit() {
     const request = {
-      query: this.currentQuery,
-      progress: new Observable<number>(),
-      result: new Observable<string>(),
+      query: this.queryText,
+      progress: { value: 0, bufferValue: 0 },
+      result: 'Fetching...',
     }
-    this.requests.unshift(request);
+
+    this.slow.get(this.queryText).subscribe(
+      (result) => {
+        request.result = JSON.stringify(result);
+        request.progress.value = 100;
+      },
+      (error) => {
+        request.result = error.message;
+        request.progress.bufferValue = 100;
+      }
+    )
     if (this.requests.length >= this.limit) {
       this.requests.pop();
     }
-    request.result = this.slow.get(request);
+    this.requests.unshift(request);
   }
 }
