@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AppRequest, SlowService } from './slow.service';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject, ReplaySubject, BehaviorSubject } from 'rxjs';
-import { delay, map, tap, shareReplay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { delay, map, shareReplay, tap } from 'rxjs/operators';
 import { CacheService } from './cache.service';
 
 export interface AppRequest {
